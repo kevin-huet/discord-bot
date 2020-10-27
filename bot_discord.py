@@ -3,11 +3,23 @@ import random
 import requests
 import shutil
 import PIL
+import yaml
+import imgur
+import io
+import aiohttp
+import random
 from ascii_converter import img_resize, grayscale, pixels_to_ascii, create_image_from_ascii
 
 TOKEN = ''
 
 client = discord.Client()
+
+
+def init():
+    global TOKEN
+    a_yaml_file = open("config.yaml")
+    parsed_yaml_file = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
+    TOKEN = parsed_yaml_file['token']
 
 
 def save_image(url):
@@ -46,6 +58,25 @@ async def on_message(message):
     if message.content.startswith('!help'):
         await message.author.send('Usage:\n!ascii + image')
 
+    if message.content.startswith('!stonks'):
+        await channel.send('{0.author.mention}'.format(message), file=discord.File('stonk.jpg'))
+
+    if message.content.startswith('!notstonks'):
+        await channel.send('{0.author.mention}'.format(message), file=discord.File('notstonks.png'))
+
+    if message.content.startswith('?search'):
+        array = message.content
+        array = array.split(' ')
+        if len(array) > 1:
+            array[0] = ""
+            value = " ".join(array)
+            print(value)
+            image = imgur.search_image(value)
+            if isinstance(image, str):
+                await channel.send('no result found')
+            else:
+                await channel.send(image['results'][0]['url'])
+
 
 @client.event
 async def on_ready():
@@ -55,4 +86,6 @@ async def on_ready():
     print('------')
 
 
+init()
+imgur.init()
 client.run(TOKEN)
