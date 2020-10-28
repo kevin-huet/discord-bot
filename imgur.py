@@ -26,7 +26,8 @@ def search_image(tags):
 
     if r.status_code == 200:
         # load the GIFs using the urls for the smaller GIF sizes
-        return json.loads(r.content)
+        rng = json.loads(r.content)
+        return random.choice(rng['results'])
 
     else:
         return 'result not found'
