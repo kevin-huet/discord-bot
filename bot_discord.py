@@ -8,6 +8,7 @@ import imgur
 import io
 import aiohttp
 import random
+from commands import search, raiderio, ascii
 from ascii_converter import img_resize, grayscale, pixels_to_ascii, create_image_from_ascii
 
 TOKEN = ''
@@ -22,21 +23,6 @@ def init():
     TOKEN = parsed_yaml_file['token']
 
 
-def save_image(url):
-    response = requests.get(url, stream=True)
-    with open('image.png', 'wb') as out_file:
-        shutil.copyfileobj(response.raw, out_file)
-    del response
-
-
-def ascii_image_conversion():
-    img = PIL.Image.open('image.png')
-    img = img_resize(img)
-    img = grayscale(img)
-    ascii_image = pixels_to_ascii(img)
-    create_image_from_ascii(ascii_image, "white")
-
-
 @client.event
 async def on_message(message):
     channel = message.channel
@@ -48,11 +34,8 @@ async def on_message(message):
         await channel.send(file=discord.File('test.png'))
 
     if message.content.startswith('!ascii'):
-        image_url = message.attachments[0].url
-        emoji = '\N{THUMBS UP SIGN}'
-        save_image(image_url)
-        ascii_image_conversion()
-        await message.add_reaction(emoji)
+        ascii.run(message)
+        await message.add_reaction('\N{THUMBS UP SIGN}')
         await channel.send('{0.author.mention}'.format(message), file=discord.File('test.png'))
 
     if message.content.startswith('!help'):
@@ -64,18 +47,13 @@ async def on_message(message):
     if message.content.startswith('!notstonks'):
         await channel.send('{0.author.mention}'.format(message), file=discord.File('notstonks.png'))
 
+    if message.content.startswith('?affix'):
+        affixes = raiderio.affixes()
+        msg = '{0.author.mention} '+affixes[0]['name']+' '+affixes[1]['name']+' '+affixes[2]['name']
+        await channel.send(msg.format(message))
+
     if message.content.startswith('?search'):
-        array = message.content
-        array = array.split(' ')
-        if len(array) > 1:
-            array[0] = ""
-            value = " ".join(array)
-            print(value)
-            image = imgur.search_image(value)
-            if isinstance(image, str):
-                await channel.send('no result found')
-            else:
-                await channel.send(image['results'][0]['url'])
+        await channel.send(search.run(message, channel))
 
 
 @client.event
@@ -88,4 +66,5 @@ async def on_ready():
 
 init()
 imgur.init()
+print(TOKEN)
 client.run(TOKEN)
