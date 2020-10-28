@@ -1,7 +1,6 @@
 import PIL.Image
 from PIL import ImageFont, ImageDraw, Image
 import sys
-from bot import tweet_image, get_tweet_mention
 
 chars = ["@", "#", "S", "%", "?", "*", "+", ";", ":", ",", "."]
 _BLACK = (0, 0, 0)
@@ -75,19 +74,3 @@ def grayscale(img):
     return img.convert("L")
 
 
-def main(argv):
-    if len(argv) < 1:
-        return
-    tweet_id, color = get_tweet_mention()
-    img = PIL.Image.open('img.jpeg')
-    img = img_resize(img)
-    img = grayscale(img)
-    ascii_image = pixels_to_ascii(img)
-    create_image_from_ascii(ascii_image, color)
-    if len(argv) > 1 and len(argv[1]) > 0:
-        with open(argv[1], "w") as f:
-            f.write(ascii_image)
-    #tweet_image(tweet_id)
-
-
-main(sys.argv[1:])

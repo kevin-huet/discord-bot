@@ -8,7 +8,6 @@ import imgur
 import io
 import aiohttp
 import random
-from discord.utils import get
 from commands import search, raiderio, ascii
 from ascii_converter import img_resize, grayscale, pixels_to_ascii, create_image_from_ascii
 
@@ -65,12 +64,7 @@ async def on_ready():
     print('------')
 
 
-@client.event
-async def on_member_join(member):
-    print("test")
-    channel = discord.utils.get(member.guild.text_channels, name="bot")
-    await channel.send(f"{member} has arrived!")
-
 init()
 imgur.init()
+print(TOKEN)
 client.run(TOKEN)
