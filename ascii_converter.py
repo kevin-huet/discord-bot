@@ -14,9 +14,9 @@ MAX_WIDTH = 1920
 MAX_HEIGHT = 1920
 
 
-def resize_img():
+def resize_img(file_name):
     i = 0
-    img = Image.open('test.png')
+    img = Image.open(file_name+'.png')
     width = img.size[0]
     height = img.size[1]
     while i != 2:
@@ -29,7 +29,7 @@ def resize_img():
             new_width = new_height * width / height
             img = img.resize((int(new_width), int(new_height)), Image.ANTIALIAS)
         i += 1
-    img.save('test.png')
+    img.save(file_name+'.png')
 
 
 def create_image_from_ascii(txt, _color):
@@ -58,7 +58,7 @@ def create_image_from_ascii(txt, _color):
     else:
         draw.text((0, 0), txt, _BLACK)
     image.save(file_name+'.png')
-    resize_img()
+    resize_img(file_name)
     return file_name
 
 
