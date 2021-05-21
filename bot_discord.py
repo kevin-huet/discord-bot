@@ -8,6 +8,7 @@ import imgur
 import io
 import aiohttp
 import random
+import os
 from commands import search, raiderio, ascii
 from ascii_converter import img_resize, grayscale, pixels_to_ascii, create_image_from_ascii
 
@@ -34,9 +35,10 @@ async def on_message(message):
         await channel.send(file=discord.File('test.png'))
 
     if message.content.startswith('!ascii'):
-        ascii.run(message)
+        result = ascii.run(message)
         await message.add_reaction('\N{THUMBS UP SIGN}')
-        await channel.send('{0.author.mention}'.format(message), file=discord.File('test.png'))
+        await channel.send('{0.author.mention}'.format(message), file=discord.File(result+'.png'))
+        os.remove(result+".png")
 
     if message.content.startswith('!help'):
         await message.author.send('Usage:\n!ascii + image')
@@ -65,6 +67,5 @@ async def on_ready():
 
 
 init()
-imgur.init()
 print(TOKEN)
 client.run(TOKEN)
